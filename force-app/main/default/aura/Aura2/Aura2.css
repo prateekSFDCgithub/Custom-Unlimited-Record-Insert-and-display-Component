@@ -1,0 +1,57 @@
+.THIS .customButton {
+    display: inline-block;
+    padding:  1px 3px; /* Adjust padding as needed */
+    font-size: 12px; /* Adjust font size as needed */
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid black; /* Adjust border color as needed */
+    color: white; /* Adjust text color as needed */
+    background-color: white; /* Adjust background color as needed */
+    border-radius: 4px;
+   /* Adjust border radius as needed */
+}
+
+.THIS .customButton:hover {
+    background-color: #FFD580; /* Adjust hover background color as needed */
+    border: 1px solid #45a049; /* Adjust hover border color as needed */
+}
+.THIS .customButtons {
+    display: inline-block;
+    padding:  6px 8px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid black; /* Adjust border color as needed */
+    color: white; /* Adjust text color as needed */
+    background-color: white; /* Adjust background color as needed */
+    border-radius: 4px;
+   /* Adjust border radius as needed */
+}
+
+.THIS .customButtons:hover {
+    background-color: #FFD580; /* Adjust hover background color as needed */
+    border: 1px solid #45a049; /* Adjust hover border color as needed */
+}
+.THIS .ss{
+  background-color: red;
+  color: black;
+}
+.THIS .sss{
+  background-color :#014486;
+  color: black;
+}
+.THIS .ssss{
+   background-color :#0176d3;
+  color: white;
+}
+.THIS .slds-modal__content{
+    background-color: aliceblue;
+}
+.THIS.slds-modal__footer{
+   background-color: #0176d3;
+}
+.THIS .slds-modal__header{
+    background-color: #0176d3;
+}
