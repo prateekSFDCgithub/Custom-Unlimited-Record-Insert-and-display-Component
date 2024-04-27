@@ -15,7 +15,9 @@ The Salesforce Aura Component for Unlimited Record Creation empowers users to ge
 
 **Configuration:** Configure the component to align with your organization's requirements, specifying record attributes and display preferences as needed.
 
-**Usage:**Begin creating records instantly by leveraging the component's intuitive interface. Customize record details and placement on pages according to your workflow.
+# Usage
+
+Begin creating records instantly by leveraging the component's intuitive interface. Customize record details and placement on pages according to your workflow.
 
 **Get Started:**
 Experience the limitless potential of the Salesforce Aura Component for Unlimited Record Creation today. Revolutionize your data management processes and enhance productivity across your Salesforce environment.
