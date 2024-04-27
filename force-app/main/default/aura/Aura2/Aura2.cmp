@@ -1,0 +1,206 @@
+<aura:component controller="AuraController" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="reminderToDiscussPicklistOptions" type="List" default="[]"/>
+    <aura:attribute name="showFooterButtons" type="Boolean" default="true"/>
+    <aura:attribute name="remainderList" type="Reminder__c[]"/>
+    <aura:attribute name="returnedRemainderList" type="Reminder__c[]"/>
+   <aura:attribute name="reminderId" type="string"/>
+   <aura:attribute name="bShowModal" type="Boolean" default="false" />
+   <aura:attribute name ="OwnerIdAt" type ="string"/>
+    <aura:attribute name ="WhatIdAt" type ="string"/>
+   
+    <aura:attribute name="Reminders_To_discuss__c" type="string" />
+    <aura:attribute name="ReminderName" type="string" />
+    <aura:attribute name="Notes_from_Check_ins_Reporting__c" type="string" />
+    <aura:attribute name="Action_Items_Next_Steps__c" type="string" />
+    
+    <aura:attribute name="Reminders_To_discuss__c_Updated" type="string" />
+   <aura:attribute name="ReminderName_Updated" type="string" />
+    <aura:attribute name="Notes_from_Check_ins_Reporting__c_Updated" type="string" />
+    <aura:attribute name="Action_Items_Next_Steps__c_Updated" type="string" />
+    
+    <aura:attribute name="isRefreshing2" type="Boolean" default="false"/> 
+   
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="PageReference" type="Object"/>
+    <lightning:navigation aura:id = "navService"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="draftValues" type="Object"/>
+   <aura:attribute name="sortBy" type="String"/>
+    <aura:attribute name="sortDirection" type="String"/>
+    <aura:attribute name="isRefreshing" type="Boolean" default="false"/>    
+    
+    <aura:attribute name="noRow" type="Boolean" default="false"/>
+    <lightning:card class="custom-card" title ="">
+        <div class="slds-m-around--xx-large">
+            <div class="slds-float_left slds-p-bottom_small">
+                <h1 class="slds-page-header__title">Reminders</h1>
+            </div>
+            <div class="slds-float_right slds-p-bottom_small">
+                <h1 class="slds-page-header__title">Add Reminder 
+                    <div class=" customButtons " onclick="{!c.addRow}">
+                    <lightning:buttonIcon iconName="utility:add"  size="medium" variant="bare" alternativeText="Add" />
+                    </div>
+                </h1>
+            </div>
+            <div class="container-fluid">        
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col">
+                                <div class="slds-truncate">Sr. No</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Reminders To discuss">Reminders To discuss</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Notes from Check-ins / Reporting">Notes from Check-ins / Reporting</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Action Items / Next Steps">Action Items / Next Steps</div>
+                            </th>  
+                          
+                            
+                        </tr>
+                    </thead>   
+                    <tbody>      
+                        <aura:iteration items="{!v.remainderList}" var="acc" indexVar="index">
+                            <tr>
+                                <td> 
+                                    {!index + 1}
+                                </td>
+                                <td>
+                                  <lightning:select aura:id="reminderToDiscussPicklist"
+                      value="{!acc.Reminders_To_discuss__c}"
+                                                  
+                      name="Reminders_To_discuss__c"
+                      label="Reminders To discuss">
+        <!-- Load picklist options dynamically -->
+                                      <option value="choose_one01">Choose One</option>
+        <aura:iteration items="{!v.reminderToDiscussPicklistOptions}" var="option">
+            
+            <option value="{!option}">{!option}</option>
+        </aura:iteration>
+    </lightning:select>   
+                           
+                                </td>
+                                <td>
+                                    <lightning:textarea value="{!acc.Notes_from_Check_ins_Reporting__c}" name="Notes_from_Check_ins_Reporting__c" label="Notes from Check-ins / Reporting" />
+                                </td>
+                                <td>
+                                    <lightning:textarea value="{!acc.Action_Items_Next_Steps__c}" name="Action_Items_Next_Steps__c" label="Action Items / Next Steps" />
+                                </td>
+                               <!-- <td>
+                                    <lightning:input  value="{!acc.EventId__c}" name="EventId__c" label="Event Id" />
+                                </td>-->
+                                <td>
+                                    <a onclick="{!c.removeRecord}" data-record="{!index}">
+                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                        <span class="slds-assistive-text">Delete</span>
+                                    </a>
+                                </td> 
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                <div aura:id="buttonS" class="slds-align_absolute-center slds-p-top_small">
+                    <lightning:button variant="brand" label="Submit" title="Brand action" onclick="{!c.saveAccounts}" />
+                </div>
+            </div>
+        </div>
+        <div style="overflow-x: auto; overflow-y: auto; max-height: 300px; /* adjust max-height as needed */">
+            <div class=" customButton " onclick="{!c.refreshData}">
+                <lightning:icon style ="font-color:red;" iconName="utility:refresh" size="x-small" alternative-text="Refresh" class="slds-icon-text-default"/>
+       
+    </div>
+             <aura:if isTrue="{!v.isRefreshing}">
+                    <lightning:spinner class="slds-align_absolute-center" variant="brand" size="small" alternativeText="Loading..." />
+                </aura:if>
+            <div aura:id="datatableContainer">
+                
+                <lightning:datatable
+                                     aura:id="datatable"                     
+                                     keyField="Id"
+                                     data="{!v.returnedRemainderList}"
+                                     columns="{!v.columns}"
+                                     onsave="{!c.handleSave}"
+                                     draftValues="{!v.draftValues}"
+                                     hideCheckboxColumn="true"
+                                      sortedBy="{!v.sortBy}"
+                                    sortedDirection="{!v.sortDirection}"
+                                    onsort="{!c.handleSort}"                    
+                                     resizeColumnDisabled="false"
+                                     onrowaction="{!c.handleRowAction}"
+                                       rowClass="custom-row"
+                                      
+                                     
+                                     />
+                
+                
+            </div>
+             <aura:if isTrue="{!v.bShowModal}">
+        <section role="dialog" tabindex="-1"
+                 aria-labelledby="modal-heading-01"
+                 aria-modal="true"
+                 aria-describedby="modal-content-id-1"
+                class="slds-modal slds-fade-in-open">
+           <div class="slds-modal__container">
+              <!-- modal header start -->
+              <header style="" class="slds-modal__header">
+                 <button style = "background-color:#0176d3" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.closeModal}">
+                    <lightning:icon iconName="utility:close" alternativeText="close" variant="inverse" size="small" />
+                 </button>
+                 <h2 style="color:white" id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Reminder Detail</h2>
+              </header>
+              <!-- modal body start -->                                                                 
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                
+                <div  layout-type="Full" onsuccess="{!c.handleSuccess}">
+                    <aura:if isTrue="{!v.isRefreshing}">
+                    <lightning:spinner class="slds-align_absolute-center" variant="brand" size="small" alternativeText="Loading..." />
+                </aura:if>
+                    <lightning:messages />
+                    <lightning:layout multipleRows="true">
+                        <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6" >
+                           
+                            <lightning:select aura:id="Reminders_To_discuss__c"
+                      value="{!v.Reminders_To_discuss__c}"
+                      onchange="{!c.handleModalChange}" 
+                      
+                      name="Reminders_To_discuss__c"
+                      label="Reminders To discuss">
+        <!-- Load picklist options dynamically -->
+                                      <option value="choose_one01">Choose One</option>
+        <aura:iteration items="{!v.reminderToDiscussPicklistOptions}" var="option">
+            
+            <option value="{!option}">{!option}</option>
+        </aura:iteration>
+    </lightning:select>   
+                            
+                            <ui:inputText aura:id="usdInput" label="Reminder Name" change="{!c.handleModalChange}" value="{!v.ReminderName}" disabled="true" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" padding="around-small" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6">
+                           <lightning:textarea aura:id = "Notes_from_Check_ins_Reporting__c" name="Notes_from_Check_ins_Reporting__c" label="Notes from Check-ins / Reporting" value="{!v.Notes_from_Check_ins_Reporting__c}" onchange="{!c.handleModalChange}" />
+                           <lightning:textarea aura:id="Action_Items_Next_Steps__c" name="Action_Items_Next_Steps__c" label="Action Items/Next Steps" value="{!v.Action_Items_Next_Steps__c}" onchange="{!c.handleModalChange}" />
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                    <!-- Center-aligned button -->
+                    <div style="text-align: center;">
+                        <button class="ssss slds-p-right_small slds-p-left_small slds-button button" type="button" onclick="{!c.handleSubmit}" >Update</button>
+                    </div>
+                </div><br/>
+                
+              </div>
+              <!-- modal footer start-->
+              <footer class="slds-modal__footer">
+                  <button class="ssss slds-p-right_small slds-p-left_small slds-button button" onclick="{!c.closeModal}" type="button">Close</button>
+              </footer>
+           </div>
+        </section>
+    </aura:if>
+     
+    
+            
+        </div>
+    </lightning:card>
+</aura:component>
